@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Trophy, Home, User, LogOut, Activity } from 'lucide-react';
+import { Trophy, Home, User, LogOut, Activity, Bookmark } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export default function Navigation() {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Canlı', href: '/live', icon: Activity },
+    { name: 'Tahminlerim', href: '/my-predictions', icon: Bookmark },
     { name: 'Sıralama', href: '/leaderboard', icon: Trophy },
     { name: 'Profil', href: '/profile', icon: User },
   ];
