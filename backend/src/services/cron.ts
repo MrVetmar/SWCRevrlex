@@ -59,14 +59,38 @@ export const evaluatePredictions = async () => {
           },
         });
 
-        // Update user total points
+        // Calculate total points securely via aggregate
+        const agg = await prisma.prediction.aggregate({
+          _sum: { pointsAwarded: true },
+          where: { userId: prediction.userId }
+        });
+        const totalPointsSum = agg._sum.pointsAwarded || 0;
+
+        // Give achievement if perfect score
+        let achievementUpdate: any = undefined;
+        if (points === 5) {
+          const user = await prisma.user.findUnique({ where: { id: prediction.userId } });
+          let currentAchievements: string[] = [];
+          if (user?.achievements) {
+            try {
+              currentAchievements = Array.isArray(user.achievements) ? user.achievements as string[] : [];
+            } catch (e) {}
+          }
+          if (!currentAchievements.includes('EXACT_GUESS')) {
+            currentAchievements.push('EXACT_GUESS');
+            achievementUpdate = currentAchievements;
+          }
+        }
+
+        const dataToUpdate: any = { totalPoints: totalPointsSum };
+        if (achievementUpdate) {
+          dataToUpdate.achievements = achievementUpdate;
+        }
+
+        // Update user
         await prisma.user.update({
           where: { id: prediction.userId },
-          data: {
-            totalPoints: {
-              increment: points,
-            },
-          },
+          data: dataToUpdate,
         });
 
         // Emit real-time update
@@ -81,7 +105,7 @@ export const evaluatePredictions = async () => {
     // After evaluation, broadcast the new leaderboard
     const topUsers = await prisma.user.findMany({
       orderBy: { totalPoints: 'desc' },
-      take: 10,
+      take: 100,
       select: { id: true, username: true, totalPoints: true, achievements: true, avatarUrl: true },
     });
     io.emit('leaderboard_update', topUsers);

@@ -5,7 +5,7 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
   try {
     const topUsers = await prisma.user.findMany({
       orderBy: { totalPoints: 'desc' },
-      take: 10,
+      take: 100,
       select: {
         id: true,
         username: true,
