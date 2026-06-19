@@ -86,10 +86,20 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
       const homeCrest = match.homeTeam?.crest || null;
       const awayCrest = match.awayTeam?.crest || null;
       const startTime = new Date(match.utcDate);
-      const status = mapStatus(match.status);
+      let status = mapStatus(match.status);
       
       const homeScore = match.score?.fullTime?.home !== null ? match.score.fullTime.home : null;
       const awayScore = match.score?.fullTime?.away !== null ? match.score.fullTime.away : null;
+
+      // WORKAROUND: football-data.org sometimes gets stuck at IN_PLAY for hours after the match ends.
+      // If it's been more than 140 minutes since the match started and we have a score, force it to FINISHED.
+      const nowMs = new Date().getTime();
+      const startMs = new Date(match.utcDate).getTime();
+      const diffMinutes = Math.floor((nowMs - startMs) / 60000);
+      
+      if (status === MatchStatus.IN_PLAY && diffMinutes > 140 && homeScore !== null && awayScore !== null) {
+        status = MatchStatus.FINISHED;
+      }
       
       let minuteStr: string | null = null;
       if (match.status === 'PAUSED') {
