@@ -100,7 +100,26 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
         } else if (match.status === 'EXTRA_TIME') {
           minuteStr = match.minute ? `UZ ${match.minute}'` : 'UZ';
         } else {
-          minuteStr = match.minute ? `${match.minute}'` : 'Canlı';
+          if (match.minute) {
+            minuteStr = `${match.minute}'`;
+          } else {
+            // Calculate manually if API doesn't provide it
+            const nowMs = new Date().getTime();
+            const startMs = new Date(match.utcDate).getTime();
+            const diffMinutes = Math.floor((nowMs - startMs) / 60000);
+            
+            if (diffMinutes < 0) {
+              minuteStr = "0'";
+            } else if (diffMinutes <= 45) {
+              minuteStr = `${diffMinutes}'`;
+            } else if (diffMinutes > 45 && diffMinutes < 60) {
+              minuteStr = `45+'`; // Halftime roughly
+            } else if (diffMinutes >= 60 && diffMinutes <= 105) {
+              minuteStr = `${diffMinutes - 15}'`;
+            } else {
+              minuteStr = `90+'`;
+            }
+          }
         }
       }
 
@@ -131,7 +150,7 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
         },
       });
       
-      processedMatches.push({ ...updatedMatch, elapsed: match.minute });
+      processedMatches.push(updatedMatch);
     }
 
     console.log(`[Football-Data] Synced ${matches.length} matches.`);
