@@ -17,7 +17,7 @@ interface Match {
   homeScore: number | null;
   awayScore: number | null;
   status: 'SCHEDULED' | 'IN_PLAY' | 'FINISHED';
-  elapsed?: number; // Minute
+  minute?: string | null;
   predictionStats?: {
     total: number;
     homePercent: number;
@@ -130,10 +130,7 @@ export default function LiveMatches() {
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500"></div>
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-xs font-bold px-2 py-1 bg-red-500/10 text-red-500 rounded flex items-center gap-1 animate-pulse">
-                        <Activity size={12} /> CANLI
-                      </span>
-                      <span className="text-xs text-zinc-400 font-mono">
-                        {match.elapsed ? `${match.elapsed}'` : "CANLI"}
+                        <Activity size={12} /> {match.minute || 'CANLI'}
                       </span>
                     </div>
                     

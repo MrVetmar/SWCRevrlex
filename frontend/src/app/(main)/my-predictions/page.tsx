@@ -16,6 +16,7 @@ interface Match {
   status: 'SCHEDULED' | 'IN_PLAY' | 'FINISHED';
   homeScore: number | null;
   awayScore: number | null;
+  minute?: string | null;
 }
 
 interface Prediction {
@@ -119,12 +120,12 @@ export default function MyPredictionsPage() {
                     <Clock size={16} />
                     {new Date(match.startTime).toLocaleString()}
                   </div>
-                  <div className={`text-xs font-bold px-2 py-1 rounded-md ${
+                  <div className={`text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 ${
                     match.status === 'FINISHED' ? 'bg-zinc-800 text-zinc-300' : 
                     match.status === 'IN_PLAY' ? 'bg-emerald-500/20 text-emerald-400 animate-pulse' : 
                     'bg-blue-500/20 text-blue-400'
                   }`}>
-                    {translateStatus(match.status)}
+                    {match.status === 'IN_PLAY' && match.minute ? match.minute : translateStatus(match.status)}
                   </div>
                 </div>
 

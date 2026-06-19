@@ -90,7 +90,19 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
       
       const homeScore = match.score?.fullTime?.home !== null ? match.score.fullTime.home : null;
       const awayScore = match.score?.fullTime?.away !== null ? match.score.fullTime.away : null;
-      const elapsed = status === MatchStatus.IN_PLAY ? match.minute : undefined; // football-data.org uses match.minute
+      
+      let minuteStr: string | null = null;
+      if (match.status === 'PAUSED') {
+        minuteStr = 'HT';
+      } else if (['IN_PLAY', 'EXTRA_TIME', 'PENALTY_SHOOTOUT'].includes(match.status)) {
+        if (match.status === 'PENALTY_SHOOTOUT') {
+          minuteStr = 'PEN';
+        } else if (match.status === 'EXTRA_TIME') {
+          minuteStr = match.minute ? `UZ ${match.minute}'` : 'UZ';
+        } else {
+          minuteStr = match.minute ? `${match.minute}'` : 'Canlı';
+        }
+      }
 
       const updatedMatch = await prisma.match.upsert({
         where: { id: matchId },
@@ -103,6 +115,7 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
           awayTeam,
           homeCrest,
           awayCrest,
+          minute: minuteStr,
         },
         create: {
           id: matchId,
@@ -114,10 +127,11 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
           status,
           homeScore,
           awayScore,
+          minute: minuteStr,
         },
       });
       
-      processedMatches.push({ ...updatedMatch, elapsed });
+      processedMatches.push({ ...updatedMatch, elapsed: match.minute });
     }
 
     console.log(`[Football-Data] Synced ${matches.length} matches.`);

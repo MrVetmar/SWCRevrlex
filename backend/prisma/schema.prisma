@@ -52,6 +52,7 @@ model Match {
   homeScore   Int?
   awayScore   Int?
   status      MatchStatus  @default(SCHEDULED)
+  minute      String?
   createdAt   DateTime     @default(now())
   predictions Prediction[]
 }
