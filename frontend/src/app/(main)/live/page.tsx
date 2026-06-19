@@ -18,6 +18,12 @@ interface Match {
   awayScore: number | null;
   status: 'SCHEDULED' | 'IN_PLAY' | 'FINISHED';
   elapsed?: number; // Minute
+  predictionStats?: {
+    total: number;
+    homePercent: number;
+    awayPercent: number;
+    drawPercent: number;
+  } | null;
 }
 
 export default function LiveMatches() {
@@ -166,6 +172,30 @@ export default function LiveMatches() {
                         <div className="text-lg font-bold text-white">{translateTeamName(match.awayTeam)}</div>
                       </div>
                     </div>
+
+                    {match.predictionStats && (
+                      <div className="mt-6 pt-4 border-t border-zinc-800">
+                        <div className="flex justify-between text-xs text-zinc-400 mb-2">
+                          <span>Topluluk Tahminleri ({match.predictionStats.total} Kişi)</span>
+                        </div>
+                        <div className="h-2 w-full flex rounded-full overflow-hidden bg-zinc-800">
+                          {match.predictionStats.homePercent > 0 && (
+                            <div style={{ width: `${match.predictionStats.homePercent}%` }} className="bg-blue-500" title={`${translateTeamName(match.homeTeam)}: %${match.predictionStats.homePercent}`}></div>
+                          )}
+                          {match.predictionStats.drawPercent > 0 && (
+                            <div style={{ width: `${match.predictionStats.drawPercent}%` }} className="bg-zinc-500" title={`Beraberlik: %${match.predictionStats.drawPercent}`}></div>
+                          )}
+                          {match.predictionStats.awayPercent > 0 && (
+                            <div style={{ width: `${match.predictionStats.awayPercent}%` }} className="bg-red-500" title={`${translateTeamName(match.awayTeam)}: %${match.predictionStats.awayPercent}`}></div>
+                          )}
+                        </div>
+                        <div className="flex justify-between text-[10px] mt-1 text-zinc-500 font-bold px-1">
+                          <span className={match.predictionStats.homePercent >= match.predictionStats.awayPercent && match.predictionStats.homePercent >= match.predictionStats.drawPercent ? "text-blue-400" : ""}>%{match.predictionStats.homePercent} {translateTeamName(match.homeTeam)}</span>
+                          <span className={match.predictionStats.drawPercent >= match.predictionStats.homePercent && match.predictionStats.drawPercent >= match.predictionStats.awayPercent ? "text-zinc-300" : ""}>%{match.predictionStats.drawPercent} Beraberlik</span>
+                          <span className={match.predictionStats.awayPercent >= match.predictionStats.homePercent && match.predictionStats.awayPercent >= match.predictionStats.drawPercent ? "text-red-400" : ""}>%{match.predictionStats.awayPercent} {translateTeamName(match.awayTeam)}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
