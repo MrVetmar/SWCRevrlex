@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({
       message: 'User registered successfully',
-      user: { id: user.id, username: user.username, email: user.email, role: user.role, totalPoints: user.totalPoints },
+      user: { id: user.id, username: user.username, email: user.email, role: user.role, totalPoints: user.totalPoints, avatarUrl: user.avatarUrl, bio: user.bio },
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -96,7 +96,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.json({
       message: 'Logged in successfully',
-      user: { id: user.id, username: user.username, email: user.email, role: user.role, totalPoints: user.totalPoints },
+      user: { id: user.id, username: user.username, email: user.email, role: user.role, totalPoints: user.totalPoints, avatarUrl: user.avatarUrl, bio: user.bio },
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -131,6 +131,8 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
         role: true,
         totalPoints: true,
         achievements: true,
+        avatarUrl: true,
+        bio: true,
         createdAt: true,
       },
     });
