@@ -92,12 +92,16 @@ export const syncMatchesFromAPI = async (force: boolean = false) => {
       const awayScore = match.score?.fullTime?.away !== null ? match.score.fullTime.away : null;
 
       // WORKAROUND: football-data.org sometimes gets stuck at IN_PLAY for hours after the match ends.
-      // If it's been more than 140 minutes since the match started and we have a score, force it to FINISHED.
+      // If it's been a long time since the match started and we have a score, force it to FINISHED.
       const nowMs = new Date().getTime();
       const startMs = new Date(match.utcDate).getTime();
       const diffMinutes = Math.floor((nowMs - startMs) / 60000);
       
-      if (status === MatchStatus.IN_PLAY && diffMinutes > 140 && homeScore !== null && awayScore !== null) {
+      // Group stage matches don't have extra time. Max ~110 mins. Use 115 as safety.
+      // Knockout matches can have extra time & penalties. Use 140 as safety.
+      const maxDuration = match.stage === 'GROUP_STAGE' ? 115 : 140;
+      
+      if (status === MatchStatus.IN_PLAY && diffMinutes > maxDuration && homeScore !== null && awayScore !== null) {
         status = MatchStatus.FINISHED;
       }
       
