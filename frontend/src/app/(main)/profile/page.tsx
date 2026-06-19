@@ -137,7 +137,9 @@ export default function ProfilePage() {
                 {user.achievements.map((ach: string, i: number) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-zinc-950 rounded-xl border border-zinc-800">
                     <Award size={20} className="text-yellow-500" />
-                    <span className="font-medium text-zinc-300">{ach.replace(/_/g, ' ')}</span>
+                    <span className="font-medium text-zinc-300">
+                      {ach === 'EXACT_GUESS' ? 'Kahin (Tam İsabet)' : ach.replace(/_/g, ' ')}
+                    </span>
                   </div>
                 ))}
               </div>
