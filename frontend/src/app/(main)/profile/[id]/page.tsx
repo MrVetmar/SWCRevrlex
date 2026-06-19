@@ -53,7 +53,7 @@ export default function UserProfilePage() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl">
         <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center border-4 border-zinc-700 overflow-hidden shrink-0">
           {profile.avatarUrl ? (
-            <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${profile.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+            <img src={profile.avatarUrl.startsWith('http') ? profile.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${profile.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <UserCircle size={48} className="text-zinc-500" />
           )}

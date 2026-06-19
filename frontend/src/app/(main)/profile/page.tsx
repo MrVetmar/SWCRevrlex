@@ -84,7 +84,7 @@ export default function ProfilePage() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl">
         <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center border-4 border-zinc-700 overflow-hidden relative group">
           {user.avatarUrl ? (
-            <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+            <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <UserCircle size={48} className="text-zinc-500" />
           )}
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                     {avatarFile ? (
                       <img src={URL.createObjectURL(avatarFile)} alt="Preview" className="w-full h-full object-cover" />
                     ) : user.avatarUrl ? (
-                      <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <UserCircle size={32} className="text-zinc-500" />
                     )}
