@@ -92,7 +92,7 @@ export default function DashboardPage() {
       </div>
 
       {submitMessage && (
-        <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-4 fade-in duration-300">
           <div className={`px-6 py-3 rounded-xl shadow-2xl border font-medium flex items-center gap-2 ${
             submitMessage.includes('hata') || submitMessage.includes('edilemedi')
               ? 'bg-red-500/10 border-red-500/20 text-red-400'
