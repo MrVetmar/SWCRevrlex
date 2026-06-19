@@ -42,12 +42,14 @@ export default function ProfilePage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [bioInput, setBioInput] = useState('');
+  const [usernameInput, setUsernameInput] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
     if (user) {
       setBioInput(user.bio || '');
+      setUsernameInput(user.username || '');
     }
   }, [user]);
 
@@ -56,6 +58,9 @@ export default function ProfilePage() {
     try {
       const formData = new FormData();
       formData.append('bio', bioInput);
+      if (usernameInput && usernameInput !== user?.username) {
+        formData.append('username', usernameInput);
+      }
       if (avatarFile) {
         formData.append('avatar', avatarFile);
       }
@@ -68,9 +73,9 @@ export default function ProfilePage() {
       useAuthStore.getState().setUser(data.user);
       setIsEditing(false);
       setAvatarFile(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update profile', error);
-      alert('Profil güncellenirken bir hata oluştu.');
+      alert(error.response?.data?.error || 'Profil güncellenirken bir hata oluştu.');
     } finally {
       setSavingProfile(false);
     }
@@ -84,7 +89,7 @@ export default function ProfilePage() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl">
         <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center border-4 border-zinc-700 overflow-hidden relative group">
           {user.avatarUrl ? (
-            <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+            <img src={user.avatarUrl.startsWith('http') || user.avatarUrl.startsWith('data:') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <UserCircle size={48} className="text-zinc-500" />
           )}
@@ -233,7 +238,7 @@ export default function ProfilePage() {
                     {avatarFile ? (
                       <img src={URL.createObjectURL(avatarFile)} alt="Preview" className="w-full h-full object-cover" />
                     ) : user.avatarUrl ? (
-                      <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={user.avatarUrl.startsWith('http') || user.avatarUrl.startsWith('data:') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <UserCircle size={32} className="text-zinc-500" />
                     )}
@@ -253,6 +258,17 @@ export default function ProfilePage() {
                     />
                   </label>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Kullanıcı Adı</label>
+                <input
+                  type="text"
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  placeholder="Yeni kullanıcı adı"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors mb-4"
+                />
               </div>
 
               <div>

@@ -236,7 +236,7 @@ export default function LiveMatches() {
                     <Link href={`/profile/${pred.user.id}`} className="shrink-0 group">
                       <div className="w-10 h-10 bg-zinc-800 rounded-full border border-zinc-700 overflow-hidden group-hover:border-emerald-500 transition-colors">
                         {pred.user.avatarUrl ? (
-                          <img src={pred.user.avatarUrl.startsWith('http') ? pred.user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${pred.user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                          <img src={pred.user.avatarUrl.startsWith('http') || pred.user.avatarUrl.startsWith('data:') ? pred.user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${pred.user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
                           <UserCircle size={40} className="text-zinc-500 -ml-[1px] -mt-[1px]" />
                         )}

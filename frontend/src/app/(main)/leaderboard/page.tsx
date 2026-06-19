@@ -89,7 +89,7 @@ export default function LeaderboardPage() {
                   <Link href={`/profile/${user.id}`} className="flex items-center gap-3 group">
                     <div className="w-10 h-10 bg-zinc-800 rounded-full border border-zinc-700 overflow-hidden shrink-0 group-hover:border-blue-500 transition-colors">
                       {user.avatarUrl ? (
-                        <img src={user.avatarUrl.startsWith('http') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
+                        <img src={user.avatarUrl.startsWith('http') || user.avatarUrl.startsWith('data:') ? user.avatarUrl : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
                         <UserCircle size={40} className="text-zinc-500 -ml-[1px] -mt-[1px]" />
                       )}

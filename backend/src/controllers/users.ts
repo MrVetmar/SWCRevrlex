@@ -5,20 +5,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(process.cwd(), 'uploads', 'avatars');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, (req as AuthRequest).user!.userId + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configure multer storage to use memory so we can base64 encode
+const storage = multer.memoryStorage();
 
 const upload = multer({ 
   storage,
@@ -42,14 +30,26 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       return;
     }
 
-    const { bio, avatarUrl } = req.body;
+    const { bio, avatarUrl, username } = req.body;
     
     const updateData: any = {};
     if (bio !== undefined) updateData.bio = bio;
     
-    // If a file was uploaded via multer
+    // Handle Username Update
+    if (username && typeof username === 'string' && username.trim().length > 0) {
+      const trimmedUsername = username.trim();
+      const existingUser = await prisma.user.findUnique({ where: { username: trimmedUsername } });
+      if (existingUser && existingUser.id !== userId) {
+        res.status(400).json({ error: 'Bu kullanıcı adı zaten alınmış.' });
+        return;
+      }
+      updateData.username = trimmedUsername;
+    }
+    
+    // If a file was uploaded via multer, convert to base64
     if (req.file) {
-      updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      const base64Image = req.file.buffer.toString('base64');
+      updateData.avatarUrl = `data:${req.file.mimetype};base64,${base64Image}`;
     } else if (avatarUrl !== undefined) {
       // Allow passing a direct URL as fallback
       updateData.avatarUrl = avatarUrl;
