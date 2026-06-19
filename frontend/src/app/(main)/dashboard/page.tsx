@@ -167,7 +167,7 @@ export default function DashboardPage() {
 
                 {!isLocked && !isSelected && (
                   <button
-                    onClick={() => setSelectedMatchId(match.id)}
+                    onClick={() => setSelectedMatchId(match.id as number)}
                     className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-xl transition-colors"
                   >
                     Tahmin Yap
@@ -242,7 +242,7 @@ export default function DashboardPage() {
                         İptal
                       </button>
                       <button
-                        onClick={() => handlePredict(match.id)}
+                        onClick={() => handlePredict(match.id as number)}
                         className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors"
                       >
                         Kaydet
